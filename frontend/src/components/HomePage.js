@@ -38,7 +38,7 @@ const [timer, setTimer] = useState(60);
   const [menuOpen, setMenuOpen] = useState(false); // Mobile menu state
   const [showSearch, setShowSearch] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
+const API_URL = process.env.REACT_APP_API_URL;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -143,7 +143,7 @@ const [formData, setFormData] = useState({
 
 const handleGetOtp = async () => {
   try {
-    await axios.post("http://localhost:8000/api/register/", formData, { withCredentials: true });
+    await axios.post( `${API_URL}/register/`, formData, { withCredentials: true });
     setStep("verify");
     setResendDisabled(true);
     setTimer(60);
@@ -156,7 +156,7 @@ const handleGetOtp = async () => {
 const handleVerifyOtp = async () => {
   try {
     const code = otp.join("");
-    await axios.post("http://localhost:8000/api/verify-otp/", {
+    await axios.post( `${API_URL}/verify-otp/`, {
       email: formData.email,
       otp: code,
     },{ withCredentials: true });
@@ -174,7 +174,7 @@ const handleResendOTP = async () => {
   setTimer(30); // ✅ Start 30s countdown when OTP is resent
 
   try {
-    await axios.post("http://localhost:8000/api/resend-otp/", {
+    await axios.post( `${API_URL}/resend-otp/`, {
       email: formData.email,
     }, { withCredentials: true });
     setResendDisabled(true);

@@ -32,9 +32,7 @@ const professions = [
   "photographer", "videographer", "photo editor", "social media manager",
   "video editor", "graphic designer", "admin", "finance manager"
 ];
-const services = ['Photography', 'Videography', 'Photoediting', 'Videoediting', 'Graphic Designing'];
-const statuses = ['Pending', 'In Progress', 'Completed'];
-const payments = ['Yes', 'No'];
+
 const bookingsData = [];
 
 //feedback
@@ -44,7 +42,9 @@ const feedbackData = [
   { id: 3, name: "Alice Johnson", email: "alice@example.com", message: "Very professional team.", date: "2025-04-14" },
 ];
 Modal.setAppElement('#root'); // to avoid accessibility warning
+
 const Admin= () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const [selectedBooking, setSelectedBooking] = useState(null);
 const [isModalOpen, setIsModalOpen] = useState(false);
 const {logout} = useContext(AuthContext);
@@ -160,7 +160,9 @@ const [loading, setLoading] = useState(true);
   const fetchEmployees = async () => {
     try {
       const token = localStorage.getItem("access_token");
-      const response = await axios.get("http://localhost:8000/api/employees/", {
+      console.log("API_URL is:", API_URL);
+
+      const response = await axios.get(`${API_URL}/employees/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -199,7 +201,7 @@ const handleSave = async () => {
 
 
   try {
-    const response = await axios.post("http://localhost:8000/api/employees/", payload, {
+    const response = await axios.post( `${API_URL}/employees/`, payload, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -222,7 +224,7 @@ const handleSave = async () => {
 const handleUpdate = async () => {
   try {
     const response = await axios.put(
-      `http://localhost:8000/api/employees/${currentEmployee.id}/`,
+      `${API_URL}/employees/${currentEmployee.id}/`,
       currentEmployee,
       {
         headers: {
@@ -250,7 +252,7 @@ const handleDelete = async (empId) => {
   if (!confirmDelete) return;
 
   try {
-    await axios.delete(`http://localhost:8000/api/employees/${empId}/`, {
+    await axios.delete(`${API_URL}/employees/${empId}/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -308,7 +310,7 @@ const fetchBookings = async () => {
   }
 
   try {
-    const res = await axios.get("http://localhost:8000/api/bookings/", {
+    const res = await axios.get(`${API_URL}/bookings/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setClients(res.data);
@@ -330,7 +332,7 @@ const fetchManagers = async () => {
   }
 
   try {
-    const res = await axios.get("http://localhost:8000/api/social-media-managers/", {
+    const res = await axios.get( `${API_URL}/social-media-managers/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setManagers(res.data);
@@ -348,7 +350,7 @@ const fetchManagers = async () => {
 // Handle manager assignment
 const handleManagerChange = async (bookingId, managerId) => {
   try {
-    await axios.post("http://localhost:8000/api/tasks/", {
+    await axios.post(`${API_URL}/tasks/`, {
       booking_id: bookingId,
       manager_id: managerId,
     }, {
@@ -382,7 +384,7 @@ useEffect(() => {
 
 const fetchAllReports = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/reports/all/", {
+    const res = await axios.get(`${API_URL}/reports/all/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -397,7 +399,7 @@ const fetchAllReports = async () => {
 
 const handleDeleteReport = async (reportId) => {
   try {
-    await axios.delete(`http://localhost:8000/api/reports/${reportId}/`, {
+    await axios.delete(`${API_URL}/reports/${reportId}/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -417,7 +419,7 @@ const [clientActivity, setClientActivity] = useState([]);
 
 const fetchAnalyticsData = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/analytics/client-summary/", {
+    const res = await axios.get(`${API_URL}/analytics/client-summary/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -471,7 +473,7 @@ useEffect(() => {
 
 const fetchProfessionStats = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/employee/profession-stats/", {
+    const res = await axios.get(`${API_URL}/employee/profession-stats/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -489,7 +491,7 @@ const fetchProfessionStats = async () => {
 
 const fetchBookingStats = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/my-bookings/by-profession/", {
+    const res = await axios.get(`${API_URL}/my-bookings/by-profession/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -502,7 +504,7 @@ const fetchBookingStats = async () => {
 
 const fetchActivityLogs = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/employee/activity-logs/", {
+    const res = await axios.get( `${API_URL}/employee/activity-logs/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -517,7 +519,7 @@ const fetchActivityLogs = async () => {
 const handleDownloadReport = async (reportId, fileName) => {
   try {
     const response = await axios.get(
-      `http://localhost:8000/api/reports/download/${reportId}/`,
+      `${API_URL}/reports/download/${reportId}/`,
       {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("access_token")}`,

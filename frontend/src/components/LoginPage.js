@@ -16,6 +16,7 @@ const LoginPage = () => {
   const { login } = useContext(AuthContext);
   const [isSignup, setIsSignup] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const API_URL = process.env.REACT_APP_API_URL;
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -64,8 +65,8 @@ const handleSubmit = async (e) => {
   }
 
   const endpoint = isSignup
-    ? "http://localhost:8000/api/signup/"
-    : "http://localhost:8000/api/login/";
+    ? `${API_URL}/signup/`
+    : `${API_URL}/login/`;
 
   try {
     const res = await fetch(endpoint, {

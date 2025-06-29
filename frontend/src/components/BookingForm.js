@@ -24,7 +24,7 @@ const BookingForm = () => {
    const [menuOpen, setMenuOpen] = useState(false); // Mobile menu state
     const [showSearch, setShowSearch] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-  
+  const API_URL = process.env.REACT_APP_API_URL;
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedService, setSelectedService] = useState("");
 
@@ -71,7 +71,7 @@ if (!selectedService) newErrors.service = "⚠ Please select a service.";
 console.log("Payload being sent:", payload);
 
   try {
-    await axios.post("http://localhost:8000/api/book/", payload, {
+    await axios.post(`${API_URL}/book/`, payload, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },

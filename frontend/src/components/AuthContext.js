@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!getToken());
-
+const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     if (getToken()) setIsAuthenticated(true);
   }, []);
@@ -23,7 +23,7 @@ const logout = async () => {
   try {
     if (refresh && access) {
       await axios.post(
-        "http://localhost:8000/api/logout/",
+        `${API_URL}/logout/`,
         { refresh },
         {
           headers: {

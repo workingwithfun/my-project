@@ -76,6 +76,7 @@ const ITEMS_PER_PAGE = 10;
 
 
 const SMMDashboard = () => {
+  const API_URL = process.env.REACT_APP_API_URL;
   const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [employeeFilters, setEmployeeFilters] = useState('All');
@@ -617,7 +618,7 @@ const bookingId = selectedBooking?.id;
 
 const fetchBookings = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/bookings/', {
+    const response = await axios.get( `${API_URL}/bookings/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('access_token')}`
       }
@@ -644,7 +645,7 @@ const handleStatusChange = async (bookingId, newStatus) => {
     const token = localStorage.getItem("access_token");
 
     await axios.patch(
-      `http://localhost:8000/api/bookings/${bookingId}/`,
+       `${API_URL}/bookings/${bookingId}/`,
       { status: newStatus },
       {
         headers: {
@@ -715,7 +716,7 @@ const handleSave = async () => {
     };
 
     await axios.patch(
-      `http://localhost:8000/api/bookings/${bookingId}/`,
+       `${API_URL}/bookings/${bookingId}/`,
       updatedFormData,
       {
         headers: {
@@ -741,7 +742,7 @@ const generateQuotation = async () => {
   try {
     const token = localStorage.getItem('access_token');
     const { data } = await axios.post(
-      `http://localhost:8000/api/generate-quotation/${bookingId}/`,
+       `${API_URL}/generate-quotation/${bookingId}/`,
       {},
       {
         headers: {
@@ -775,7 +776,7 @@ useEffect(() => {
 
     try {
       const { data } = await axios.get(
-        `http://localhost:8000/api/bookings/${bookingId}/`,
+        `${API_URL}/bookings/${bookingId}/`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -829,7 +830,7 @@ useEffect(() => {
 const fetchEmployees = async () => {
   try {
     const token = localStorage.getItem("access_token");
-    const { data } = await axios.get("http://localhost:8000/api/employees/", {
+    const { data } = await axios.get( `${API_URL}/employees/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -846,7 +847,7 @@ const handleAssign = async () => {
     const token = localStorage.getItem("access_token");
 
     await axios.patch(
-      `http://localhost:8000/api/bookings/${selectedBooking.id}/`,
+      `${API_URL}/bookings/${selectedBooking.id}/`,
       {
         assigned_employee_ids: selectedBooking.assignedEmployeeIds || [],
       },
@@ -908,7 +909,7 @@ const openModal = async (booking) => {
 
   try {
     const token = localStorage.getItem("access_token");
-    const res = await axios.get("http://localhost:8000/api/employees/", {
+    const res = await axios.get( `${API_URL}/employees/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -938,7 +939,7 @@ const handleReportUpload = async (e) => {
 
   try {
     const token = localStorage.getItem("access_token");
-    await axios.post("http://localhost:8000/api/reports/upload/", formData, {
+    await axios.post( `${API_URL}/reports/upload/`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "multipart/form-data",
@@ -956,7 +957,7 @@ const handleReportUpload = async (e) => {
 const fetchReports = async () => {
   try {
     const token = localStorage.getItem("access_token");
-    const { data } = await axios.get("http://localhost:8000/api/reports/", {
+    const { data } = await axios.get( `${API_URL}/reports/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setReports(data);
@@ -972,7 +973,7 @@ useEffect(() => {
 const handleDeleteReport = async (reportId) => {
   try {
     const token = localStorage.getItem("access_token");
-    await axios.delete(`http://localhost:8000/api/reports/${reportId}/`, {
+    await axios.delete( `${API_URL}/reports/${reportId}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     fetchReports();

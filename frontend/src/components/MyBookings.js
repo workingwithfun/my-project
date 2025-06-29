@@ -19,7 +19,7 @@ const MyBookings = () => {
   const [showQuotationModal, setShowQuotationModal] = useState(false);
 const [quotationData, setQuotationData] = useState(null);  // Stores structured data
  const [selectedBooking, setSelectedBooking] = useState(null);
-
+const API_URL = process.env.REACT_APP_API_URL;
 const [user, setUser]=useState([]);
 useEffect(() => {
   axios.get("http://localhost:8000/api/my-bookings/", {
@@ -35,7 +35,7 @@ useEffect(() => {
 const { logout } = useContext(AuthContext);
 //user profile
 useEffect(() => {
-  axios.get("http://localhost:8000/api/profile/", {
+  axios.get(`${API_URL}/profile/`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
@@ -66,7 +66,7 @@ const handleFormSubmit = (e) => {
     state: user.State
   };
 
-  axios.put("http://localhost:8000/api/profile/update/", payload, {
+  axios.put(`${API_URL}/profile/update/`, payload, {
     headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` }
   })
   .then(res => {
@@ -192,7 +192,7 @@ const handleFormSubmit = (e) => {
     const token = localStorage.getItem("access_token");
 
     const res = await axios.post(
-      `http://localhost:8000/api/generate-quotation/${selectedBooking.id}/`,
+      `${API_URL}/generate-quotation/${selectedBooking.id}/`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );

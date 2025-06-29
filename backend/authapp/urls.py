@@ -43,5 +43,6 @@ urlpatterns = [
     path('employee/activity-logs/', employee_activity_logs, name='employee-activity-logs'),
     path('reports/download/<int:report_id>/', download_report),
     path('analytics/task-summary/', task_summary_analytics, name='task-summary'),
+    
  
 ]

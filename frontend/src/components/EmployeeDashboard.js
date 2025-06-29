@@ -29,14 +29,14 @@ function EmployeeDashboard() {
     const [assignments, setAssignments] = useState([]);
 const { logout } = useContext(AuthContext);
   const [activeSection, setActiveSection] = useState("analytics");
-
+const API_URL = process.env.REACT_APP_API_URL;
 //analytics
 const [barData, setBarData] = useState([]);
 const [pieData, setPieData] = useState([]);
 useEffect(() => {
   const token = localStorage.getItem("access_token"); // or sessionStorage, depending on your auth
 
-  axios.get("http://localhost:8000/api/analytics/employee-summary/", {
+  axios.get(`${API_URL}/analytics/employee-summary/`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -69,7 +69,7 @@ useEffect(() => {
 
 const fetchReports = async () => {
   try {
-    const response = await axios.get('http://localhost:8000/api/reports/', {
+    const response = await axios.get(`${API_URL}/reports/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -89,7 +89,7 @@ const handleReportUpload = async (e) => {
 
   try {
 await axios.post(
-  'http://localhost:8000/api/reports/upload/',
+  `${API_URL}/reports/upload/`,
   formData,
   {
     headers: {
@@ -108,7 +108,7 @@ await axios.post(
 };
 const handleDeleteReport = async (id) => {
   try {
-    await axios.delete(`http://localhost:8000/api/reports/${id}/`, {
+    await axios.delete(`${API_URL}/reports/${id}/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
@@ -142,7 +142,7 @@ useEffect(() => {
   const fetchAssignments = async () => {
     try {
       const token = localStorage.getItem("access_token");
-      const res = await axios.get("http://localhost:8000/api/assigned-bookings/", {
+      const res = await axios.get(`${API_URL}/assigned-bookings/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -198,7 +198,7 @@ useEffect(() => {
 
 const fetchEmployeeStats = async () => {
   try {
-    const res = await axios.get("http://localhost:8000/api/analytics/task-summary/", {
+    const res = await axios.get(`${API_URL}/analytics/task-summary/`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("access_token")}`,
       },
