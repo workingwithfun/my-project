@@ -13,11 +13,12 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 from decouple import config
-
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+env = environ.Env()
+environ.Env.read_env()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -26,9 +27,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-rye%#j258hjmjoqnk3eu9**01ep9*^2&cu8o8&fl+bnxx%nz_m'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env.bool("DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['your-django-api.onrender.com', 'localhost']
+
 
 
 # Application definition
@@ -155,8 +158,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# Whitenoise settings
+MIDDLEWARE.insert(1, "whitenoise.middleware.WhiteNoiseMiddleware")
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
