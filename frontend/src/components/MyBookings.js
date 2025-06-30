@@ -22,7 +22,7 @@ const [quotationData, setQuotationData] = useState(null);  // Stores structured 
 const API_URL = process.env.REACT_APP_API_URL;
 const [user, setUser]=useState([]);
 useEffect(() => {
-  axios.get("http://localhost:8000/api/my-bookings/", {
+  axios.get(`${API_URL}/my-bookings/`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("access_token")}`,
     },
