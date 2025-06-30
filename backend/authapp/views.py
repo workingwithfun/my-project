@@ -30,22 +30,26 @@ def generate_otp():
 def send_otp(request):
     serializer = ClientRegistrationSerializer(data=request.data)
     if serializer.is_valid():
-        email = serializer.validated_data['email']
-        otp = generate_otp()
         data = serializer.validated_data
+        otp = generate_otp()
 
-        # Save data temporarily in the session
-        request.session['otp'] = otp
-        request.session['email'] = data['email']
-        request.session['name'] = data['name']
-        request.session['phone'] = data['phone']
-        request.session['otp_created_at'] = timezone.now().isoformat()
+        # Create or update client
+        client, _ = Client.objects.update_or_create(
+            email=data['email'],
+            defaults={
+                'name': data['name'],
+                'phone': data['phone'],
+                'otp': otp,
+                'otp_created_at': timezone.now(),
+                'is_verified': False
+            }
+        )
 
         send_mail(
             'Your OTP Code',
             f"Hi {data['name']}, your OTP is {otp}",
             settings.EMAIL_HOST_USER,
-           [data['email']],
+            [data['email']],
             fail_silently=False,
         )
 
@@ -58,37 +62,27 @@ def verify_otp(request):
     email = request.data.get('email')
     otp = request.data.get('otp')
 
-    session_otp = request.session.get('otp')
-    session_email = request.session.get('email')
-    otp_created_at_str = request.session.get('otp_created_at')
+    try:
+        client = Client.objects.get(email=email)
+    except Client.DoesNotExist:
+        return Response({'error': 'Email not found'}, status=404)
 
-    if not (email and otp and session_otp and session_email and otp_created_at_str):
-        return Response({'error': 'Session expired or incomplete'}, status=400)
+    if client.is_verified:
+        return Response({'message': 'Already verified'})
 
-    if email != session_email:
-        return Response({'error': 'Email mismatch'}, status=400)
-
-    if otp != session_otp:
+    if otp != client.otp:
         return Response({'error': 'Incorrect OTP'}, status=400)
 
-    otp_created_at = parse_datetime(otp_created_at_str)
-    if timezone.now() > otp_created_at + timedelta(minutes=5):
+    if timezone.now() > client.otp_created_at + timedelta(minutes=5):
         return Response({'error': 'OTP expired'}, status=400)
 
     if email.lower().startswith('admin') or email.lower().startswith('ygp'):
         return Response({'message': 'This email is reserved for employees. Contact admin.'}, status=403)
 
-    # Create Client entry
-    Client.objects.create(
-        email=session_email,
-        name=request.session.get('name'),
-        phone=request.session.get('phone'),
-        is_verified=True
-    )
-
-    # Clear session
-    for key in ['otp', 'email', 'name', 'phone', 'otp_created_at']:
-        request.session.pop(key, None)
+    client.is_verified = True
+    client.otp = None
+    client.otp_created_at = None
+    client.save()
 
     return Response({'message': 'OTP verified. Proceed to signup.'})
 
@@ -113,7 +107,7 @@ def resend_otp(request):
     send_mail(
         'Resent OTP Code',
         f'Hi {client.name}, your new OTP is {otp}',
-        'noreply@yourdomain.com',
+        settings.EMAIL_HOST_USER,
         [client.email],
         fail_silently=False,
     )
